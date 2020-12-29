@@ -1,0 +1,100 @@
+import random
+from string import digits
+import string
+from random import randint, choice
+
+
+# import sys
+# import time
+# import pbd # Python Debug
+
+# Set up random number...
+def computer_guess():
+    seeds = string.digits  # string.digits is a range of digit number between 0-9.
+    random_string = random.sample(seeds, k=4)  # Sample method will apply 4 non-repeat number.
+    random_number = "".join(random_string)  # connect 4 number without spacing or ""
+    # print(f"\nThis is a debug. Computer guess {random_number}")
+    return random_number
+
+
+# Check answer
+def check_answer(random_number, nums):
+    a, b = 0, 0
+    for n in nums:
+        if n in random_number:
+            if nums.index(n) == random_number.index(n):
+                a += 1
+            else:
+                b += 1
+    return a, b
+
+
+# Guessing times: Max = 10
+times = 10
+
+
+# count times
+def guess_time():
+    global times
+    times = times - 1
+
+
+# Game Status: 0 = Game start, 1 = in the game, 2 = Finish game
+gs = 0
+
+# Game ready:
+player_name = input("Hello there, what is your name? ")
+while gs == 0:
+    choice = input(f"Hello {player_name}, do you know the rules? (1: Tell the rules. 2: Start the game.): ")
+    if choice == "1":
+        print(
+            f"########################################################################\nWelcome to play 1A2B game,Let me introduce the rules.\nI will think of 4 different digit number between 0~9. For Example: 2964.\nYou will have to guess what am I thinking of, and you will get %A and %B.\nA for same place with same number, B for only same number.\nFor example, if you guess 2468, You will get 2A1B.\nIf you get 4A, you win the game. You will have 10 times to guess.\nStart now?\n########################################################################")
+        gs = 1
+    elif choice == "2":
+        print("Are you ready? Let's play!")
+        gs = 1
+    else:
+        print("Sorry, i don't understand, please try again.")
+        continue
+    answer = computer_guess()
+while gs == 1:
+    user_input = input("Please give me 4 numbers : ")
+    # print(f"\nthis is a debug for input {user_input}")
+    # Check the input 4 numbers/letters or not
+    if len(user_input) != 4:
+        print(
+            "\n# Only different numbers.\nYou need to guess 4 numbers between 0 ~ 9.\nFor example: 1234.\nPlease try again.")
+        continue
+    # Check the input 4 numbers/letters any same or not
+    if len(set(user_input)) != 4:
+        print(
+            "\n# Different number please.\nYou need to guess 4 numbers between 0 ~ 9.\nFor example: 1234.\nPlease try again.")
+        continue
+    # Ckeck the input numbers is True or not
+    if user_input.isdigit() == False:
+        print(
+            "\n# Only numbers please.\nYou need to guess 4 numbers between 0 ~ 9.\nFor example: 1234.\nPlease try again.")
+        continue
+    a, b = check_answer(answer, user_input)
+    print(f"\n## Your answer {user_input} is {a}A{b}B")  # %dA%dB" % (a, b)
+    guess_time()
+    if a == 4:
+        print("\nContratulation! You win! Nice job!")
+        gs = 2
+    if times < 1:
+        print(f"Sorry, you're running out of times, I was thinking of {answer}.")
+        gs = 2
+    if times >= 1 and a != 4:
+        print(f"You have the wrong answer, {times} more chance. Keep trying!")
+        gs = 1
+    while gs == 2:
+        con = input("Do you want to try again? Yes(Y/y) or No ( )? ")
+        if (con == 'Y' or con == 'y'):
+            print("Let's try again!")
+            print(f"\nNow {player_name}, I am thinking of 4 different numbers.")
+            answer = computer_guess()
+            times = 10
+            gs = 1
+        else:
+            print('Bye bye')
+            break
